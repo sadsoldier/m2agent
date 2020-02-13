@@ -40,6 +40,8 @@ import (
     "agent/server/db-controller"
     "agent/server/dbdump-controller"
 
+    "agent/server/status-controller"
+
     "agent/daemon"
     "agent/config"
     "agent/bundle"
@@ -322,6 +324,10 @@ func (this *Server) Run() error {
     dbdumpController := dbdumpController.New(this.Config, dbx)
     botGroup.POST("/db/dump", dbdumpController.Dump)
     botGroup.POST("/db/resore", dbdumpController.Restore)
+
+    statusController := statusController.New(this.Config)
+    botGroup.GET("/status/hello", statusController.Hello)
+    botGroup.GET("/status/disk", statusController.Disk)
 
     router.NoRoute(this.NoRoute)
 
