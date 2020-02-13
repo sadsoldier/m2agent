@@ -15,7 +15,7 @@ import (
     "github.com/jmoiron/sqlx"
 
     "agent/config"
-    "agent/server/pgdb-model"
+    "agent/server/db-models/pgdb-model"
 )
 
 type Controller struct {

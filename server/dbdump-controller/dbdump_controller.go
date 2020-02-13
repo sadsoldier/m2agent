@@ -17,7 +17,8 @@ import (
     "github.com/jmoiron/sqlx"
 
     "agent/config"
-    "agent/server/pgdump-model"
+    "agent/server/dbdump-models/pgdump-model"
+    "agent/clients/s2"
 )
 
 type Controller struct {
@@ -84,6 +85,23 @@ type DumpRequest struct {
     Timestamp       string      `json:"timetsamp"`
 }
 
+type RestoreRequest struct {
+    TransportType   string      `json:"transport"`
+    StorageURI      string      `json:"storage"`
+    Source          string      `json:"source"`
+
+    ResourseType    string      `json:"type"`
+    Destination     string      `json:"destination"`
+    Owner           string      `json:"owner"`
+
+    ReportURI       string      `json:"reportto"`
+    JobId           string      `json:"jobid"`
+    MagicCode       string      `json:"magic"`
+    Timestamp       string      `json:"timetsamp"`
+}
+
+
+
 func (this *Controller) Dump(context *gin.Context) {
     var request DumpRequest
     var err error
@@ -112,30 +130,15 @@ func (this *Controller) dumpProcess(request DumpRequest) {
 
     /* Put dumpfile to storage */
     log.Println("send process start:", request.JobId, filepath.Base(outpath))
-    err = pgdump.Put(request.StorageURI, outpath)
+    err = s2client.Put(request.StorageURI, outpath)
     if err != nil {
         log.Println("send process error:", request.JobId, err)
         return
     }
     log.Println("send process done:", request.JobId)
-
     /* Report */
 }
 
-type RestoreRequest struct {
-    TransportType   string      `json:"transport"`
-    StorageURI      string      `json:"storage"`
-    Source          string      `json:"source"`
-
-    ResourseType    string      `json:"type"`
-    Destination     string      `json:"destination"`
-    Owner           string      `json:"owner"`
-
-    ReportURI       string      `json:"reportto"`
-    JobId           string      `json:"jobid"`
-    MagicCode       string      `json:"magic"`
-    Timestamp       string      `json:"timetsamp"`
-}
 
 func (this *Controller) Restore(context *gin.Context) {
     var request RestoreRequest
@@ -150,10 +153,11 @@ func (this *Controller) Restore(context *gin.Context) {
 }
 
 func (this *Controller) restoreProcess(request RestoreRequest) {
+
     pgdump := pgdumpModel.New(this.config, this.dbx)
 
     log.Println("get process start:", request.JobId)
-    tmppath, err := pgdump.Get(request.StorageURI, request.Source)
+    tmppath, err := s2client.Get(request.StorageURI, request.Source, this.config.StoreDir)
     if err != nil {
         log.Println("get process error:", request.JobId, err)
         return

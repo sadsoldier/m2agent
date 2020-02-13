@@ -15,9 +15,9 @@ import (
 
     "github.com/jmoiron/sqlx"
 
-    "agent/server/pgdb-model"
-    "agent/server/pguser-model"
-    "agent/transport/s2"
+    "agent/server/db-models/pgdb-model"
+    "agent/server/dbuser-models/pguser-model"
+    "agent/clients/s2"
 
 )
 

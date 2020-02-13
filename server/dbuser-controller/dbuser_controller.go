@@ -15,7 +15,7 @@ import (
     "github.com/jmoiron/sqlx"
 
     "agent/config"
-    "agent/server/pguser-model"
+    "agent/server/dbuser-models/pguser-model"
 
 )
 
