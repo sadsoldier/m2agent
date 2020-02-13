@@ -313,11 +313,12 @@ EXTRA_a2srv_SOURCES = \
 	\
 	server/server.go \
 	server/db-controller/db_controller.go \
+	server/db-models/pgdb-model/pgdb_model.go \
 	server/dbdump-controller/dbdump_controller.go \
+	server/dbdump-models/pgdump-model/pgdump_model.go \
 	server/dbuser-controller/dbuser_controller.go \
-	server/pgdb-model/pgdb_model.go \
-	server/pgdump-model/pgdump_model.go \
-	server/pguser-model/pguser_model.go \
+	server/dbuser-models/pguser-model/pguser_model.go \
+	server/status-controller/status_controller.go \
 	server/user-controller/user_controller.go \
 	server/user-model/user_model.go
 
