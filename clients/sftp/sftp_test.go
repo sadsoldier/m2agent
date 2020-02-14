@@ -8,11 +8,11 @@ import (
 )
 
 
-const uri string = "sftp://xxx:xxxx@localhost/tmp/xxxx"
+const uri string = "sftp://root:bowie2@localhost/tmp/xxxx"
 const filename string = "test3.bin"
 
 func TestPut(t *testing.T) {
-    os.Mkdir("/tmp/xxxx", os.ModeDir)
+    os.Mkdir("/tmp/123", os.ModeDir)
 
     buffer := make([]byte, 1024 * 1024)
     ioutil.WriteFile(filename, buffer, 0660)

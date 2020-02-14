@@ -7,8 +7,6 @@
 
 package sftpClient
 
-
-
 import (
     "fmt"
     "log"
@@ -25,9 +23,9 @@ import (
 )
 
 type File struct {
-    Name        string      `json:"name"`
-    Size        int64       `json:"size"`
-    ModTime     string      `json:"modtime"`
+    Name        string
+    Size        int64
+    ModTime     time.Time
 }
 
 type URI struct {
@@ -43,6 +41,7 @@ const (
     timeout time.Duration = 10
     bufferSize int64 = 1024 * 128
     partSuffix string = ".part"
+    defaultPort int = 22
 )
 
 func UriParse(compactURI string) (URI, error) {
@@ -58,7 +57,7 @@ func UriParse(compactURI string) (URI, error) {
     uri.Scheme = parsedURI.Scheme
     uri.Hostname = parsedURI.Host
 
-    uri.Port = 22
+    uri.Port = defaultPort
     if len(parsedURI.Port()) != 0 {
         uri.Port, err = strconv.Atoi(parsedURI.Port())
         if err != nil {
@@ -140,7 +139,7 @@ func List(compactURI string) (*[]File, error) {
         var file File
         file.Name = item.Name()
         file.Size = item.Size()
-        file.ModTime = item.ModTime().Format(time.RFC3339)
+        file.ModTime = item.ModTime()
         files = append(files, file)
     }
 
@@ -243,7 +242,7 @@ func Put(compactURI, srcFilepath string) (error) {
     }
     defer src.Close()
 
-    destFilepath := filepath.Join(uri.Path, filepath.Base(srcFilepath))
+    destFilepath := client.Join(uri.Path, filepath.Base(srcFilepath))
     partialFilepath := destFilepath + partSuffix
 
     dest, err := client.Create(partialFilepath)
@@ -293,7 +292,7 @@ func Remove(compactURI, xfilepath string) (error) {
     }
     defer client.Close()
 
-    client.Remove(filepath.Join(uri.Path, xfilepath))
+    client.Remove(client.Join(uri.Path, xfilepath))
     if err != nil {
        log.Println(err)
        return err
