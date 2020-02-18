@@ -78,7 +78,7 @@ type DumpRequest struct {
     ResourseName    string      `json:"resourseName"`
 
     TransportType   string      `json:"transport"`  // s2, sftp
-    StorageURI      string      `json:"storageURI"`
+    StoreURI      string        `json:"storeURI"`
 
     JobId           string      `json:"jobId"`
     JobOrigin       string      `json:"jobOrigin"`
@@ -89,7 +89,7 @@ type DumpRequest struct {
 
 type RestoreRequest struct {
     TransportType   string      `json:"transportType"`
-    StorageURI      string      `json:"storageURI"`
+    StoreURI      string      `json:"StoreURI"`
 
     DumpFilename  string        `json:"dumpFilename"`
 
@@ -132,9 +132,9 @@ func (this *Controller) dumpProcess(request DumpRequest) {
     defer os.Remove(outpath)
     log.Println("dump process done: ", request.JobId, filepath.Base(outpath))
 
-    /* Put dumpfile to storage */
+    /* Put dumpfile to Store */
     log.Println("send process start:", request.JobId, filepath.Base(outpath))
-    err = s2client.Put(request.StorageURI, outpath)
+    err = s2client.Put(request.StoreURI, outpath)
     if err != nil {
         log.Println("send process error:", request.JobId, err)
         return
@@ -161,7 +161,7 @@ func (this *Controller) restoreProcess(request RestoreRequest) {
     pgdump := pgdumpModel.New(this.config, this.dbx)
 
     log.Println("get process start:", request.JobId)
-    tmppath, err := s2client.Get(request.StorageURI, request.DumpFilename, this.config.StoreDir)
+    tmppath, err := s2client.Get(request.StoreURI, request.DumpFilename, this.config.StoreDir)
     if err != nil {
         log.Println("get process error:", request.JobId, err)
         return
