@@ -13,5 +13,7 @@ require (
 	github.com/jessevdk/go-flags v1.4.0
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/mattn/go-sqlite3 v2.0.2+incompatible
+	github.com/pkg/sftp v1.11.0
 	github.com/stretchr/testify v1.4.0
+	golang.org/x/crypto v0.0.0-20190911031432-227b76d455e7
 )

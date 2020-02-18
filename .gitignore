@@ -12,9 +12,9 @@ run/
 work/
 Makefile
 config.status
-s2srv
-s2pwd
-s2cli
+a2srv
+a2pwd
+a2cli
 builder
 config/config.go
 bundle/public.go

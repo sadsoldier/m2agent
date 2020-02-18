@@ -38,8 +38,7 @@ import (
 
     "agent/server/dbuser-controller"
     "agent/server/db-controller"
-    "agent/server/dbdump-controller"
-
+    "agent/server/dump-controller"
     "agent/server/status-controller"
 
     "agent/daemon"

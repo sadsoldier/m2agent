@@ -17,7 +17,7 @@ import (
     "github.com/jmoiron/sqlx"
 
     "agent/config"
-    "agent/server/dbdump-models/pgdump-model"
+    "agent/server/dump-models/pgdump-model"
     "agent/clients/s2"
 )
 
