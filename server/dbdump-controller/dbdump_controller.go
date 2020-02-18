@@ -74,32 +74,36 @@ func sendResult(context *gin.Context, result interface{}) {
 }
 
 type DumpRequest struct {
-    Resourse        string      `json:"resourse"`
-    ResourseType    string      `json:"type"`
-    TransportType   string      `json:"transport"`
-    StorageURI      string      `json:"storage"`
+    ResourseType    string      `json:"resourseType"` // pgsql, mysql, file
+    ResourseName    string      `json:"resourseName"`
 
-    ReportURI       string      `json:"reportto"`
-    JobId           string      `json:"jobid"`
-    MagicCode       string      `json:"magic"`
-    Timestamp       string      `json:"timetsamp"`
+    TransportType   string      `json:"transport"`  // s2, sftp
+    StorageURI      string      `json:"storageURI"`
+
+    JobId           string      `json:"jobId"`
+    JobOrigin       string      `json:"jobOrigin"`
+    Timestamp       string      `json:"timestamp"`
+    ReportURI       string      `json:"reportURI"`
+    MagicCode       string      `json:"magicCode"`
 }
 
 type RestoreRequest struct {
-    TransportType   string      `json:"transport"`
-    StorageURI      string      `json:"storage"`
-    Source          string      `json:"source"`
+    TransportType   string      `json:"transportType"`
+    StorageURI      string      `json:"storageURI"`
 
-    ResourseType    string      `json:"type"`
+    DumpFilename  string        `json:"dumpFilename"`
+
+    ResourseType    string      `json:"resourseType"`
+    ResourseOwner   string      `json:"resourseOwner"`
     Destination     string      `json:"destination"`
-    Owner           string      `json:"owner"`
 
-    ReportURI       string      `json:"reportto"`
-    JobId           string      `json:"jobid"`
-    MagicCode       string      `json:"magic"`
-    Timestamp       string      `json:"timetsamp"`
+    JobId           string      `json:"jobId"`
+    JobOrigin       string      `json:"jobOrigin"`
+    Timestamp       string      `json:"timestamp"`
+
+    ReportURI       string      `json:"reportURI"`
+    MagicCode       string      `json:"magicCode"`
 }
-
 
 
 func (this *Controller) Dump(context *gin.Context) {
@@ -157,7 +161,7 @@ func (this *Controller) restoreProcess(request RestoreRequest) {
     pgdump := pgdumpModel.New(this.config, this.dbx)
 
     log.Println("get process start:", request.JobId)
-    tmppath, err := s2client.Get(request.StorageURI, request.Source, this.config.StoreDir)
+    tmppath, err := s2client.Get(request.StorageURI, request.DumpFilename, this.config.StoreDir)
     if err != nil {
         log.Println("get process error:", request.JobId, err)
         return
@@ -167,7 +171,7 @@ func (this *Controller) restoreProcess(request RestoreRequest) {
     log.Println("get process done:", request.JobId, tmppath)
 
     log.Println("restore process start:", request.JobId)
-    err = pgdump.Restore(tmppath, request.Destination, request.Owner)
+    err = pgdump.Restore(tmppath, request.Destination, request.ResourseOwner)
     if err != nil {
         log.Println("restore process error:", request.JobId, err)
         return

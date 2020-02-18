@@ -13,7 +13,7 @@ import (
     "bytes"
     "fmt"
 
-    "agent/server/pgdb-model"
+    "agent/server/db-models/pgdb-model"
     "github.com/jmoiron/sqlx"
 
     "agent/config"
@@ -33,7 +33,7 @@ func createDB() (*sqlx.DB, error) {
     return db, nil
 }
 
-func _TestDump(t *testing.T) {
+func TestDump(t *testing.T) {
 
     configuration := config.New()
     controller := New(configuration, nil)
@@ -44,7 +44,7 @@ func _TestDump(t *testing.T) {
     router.POST("/dump", controller.Dump)
 
     dumpReq := DumpRequest{
-        Resourse:       "postgres",
+        ResourseName:       "postgres",
         ResourseType:   "pgsql",
         TransportType:  "s2",
         StorageURI:     "https://user1:12345@localhost:7001/dumps",
@@ -89,7 +89,7 @@ func TestRestore(t *testing.T) {
 
     pgdb := pgdbModel.New(dbx)
     db := pgdbModel.PgDb{
-        Name: "tmp128",
+        DbName: "tmp128",
     }
     defer pgdb.Delete(db)
 
@@ -104,11 +104,11 @@ func TestRestore(t *testing.T) {
     restoreRequest := RestoreRequest{
         TransportType:  "s2",
         StorageURI:     "https://user1:12345@localhost:7001/dumps",
-        Source:         "postgres--2020-01-28T11:05:55+02:00--thx.unix7.org.sqlz",
+        DumpFilename:   "postgres--2020-01-28T11:05:55+02:00--thx.unix7.org.sqlz",
 
         ResourseType:   "pgsql",
+        ResourseOwner:   "postgres",
         Destination:    "tmp128",
-        Owner:          "postgres",
 
         ReportURI:      "http://localhost:7003/report",
         JobId:          "localhost.123",
