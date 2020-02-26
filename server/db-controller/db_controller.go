@@ -74,14 +74,28 @@ func sendResult(context *gin.Context, result interface{}) {
 
 func (this *Controller) List(context *gin.Context) {
     var page pgdbModel.Page
-    _ = context.Bind(&page)
+    err := context.Bind(&page)
+    if err != nil {
+        sendError(context, err)
+        return
+    }
     this.pgdb.List(&page)
     sendResult(context, &page)
 }
 
+type ListAllRequest struct {
+    Pattern string `json:"pattern"`
+}
+
 func (this *Controller) ListAll(context *gin.Context) {
     var pgdbs []pgdbModel.PgDb
-    this.pgdb.ListAll(&pgdbs, "")
+    var request ListAllRequest
+    err := context.Bind(&request)
+    if err != nil {
+        sendError(context, err)
+        return
+    }
+    this.pgdb.ListAll(&pgdbs, request.Pattern)
     sendResult(context, &pgdbs)
 }
 

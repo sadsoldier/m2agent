@@ -75,15 +75,32 @@ func sendResult(context *gin.Context, result interface{}) {
 
 func (this *Controller) List(context *gin.Context) {
     var page pguserModel.Page
-    _ = context.Bind(&page)
+    err := context.Bind(&page)
+    if err != nil {
+        sendError(context, err)
+        return
+    }
     this.pguser.List(&page)
     sendResult(context, &page)
 }
 
+type ListAllRequest struct {
+    Pattern string  `json:"pattern"`
+}
+
 func (this *Controller) ListAll(context *gin.Context) {
-    var pgusers []pguserModel.PgUser
-    this.pguser.ListAll(&pgusers, "")
-    sendResult(context, &pgusers)
+    var request ListAllRequest
+    err := context.Bind(&request)
+    if err != nil {
+        sendError(context, err)
+        return
+    }
+    users, err := this.pguser.ListAll(request.Pattern)
+    if err != nil {
+        sendError(context, err)
+        return
+    }
+    sendResult(context, &users)
 }
 
 func (this *Controller) Create(context *gin.Context) {

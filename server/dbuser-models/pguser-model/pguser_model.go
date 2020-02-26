@@ -60,18 +60,19 @@ func (this *Model) List(page *Page) (error) {
     return nil
 }
 
-func (this *Model) ListAll(users *[]PgUser, pattern string) (error) {
+func (this *Model) ListAll(pattern string) (*[]PgUser, error) {
     var err error
     pattern = "%" + pattern + "%"
     request := `SELECT usename, usesuper, '' as passwd FROM pg_catalog.pg_user
                 WHERE usename LIKE $1
                 ORDER BY usename`
-    err = this.db.Select(users, request, pattern)
+    var users []PgUser
+    err = this.db.Select(&users, request, pattern)
     if err != nil {
         log.Println(err)
-        return err
+        //return &users, err
     }
-    return nil
+    return &users, err
 }
 
 func (this *Model) IsExist(user PgUser) (bool, error) {
